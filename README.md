@@ -11,3 +11,6 @@ Initially, the game is targeted to the PC/Windows platform. The engine code sour
 
 OFPS is intended to be a gameplay-related to such titles as Quake 3 Arena or Blacklight: Retribution. We would to keep serious look & feel that is related to hi-tech / modern art style. Game should provide fast, dynamic gameplay - but the details and proposals should be mostly shaped by the players community.
 
+## Join us
+
+IRC (freenode): #ofps
