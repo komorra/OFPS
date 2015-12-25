@@ -13,4 +13,4 @@ OFPS is intended to be a gameplay-related to such titles as Quake 3 Arena or Bla
 
 ## Join us
 
-IRC (freenode): #ofps
+IRC (freenode): [#ofps](http://webchat.freenode.net?channels=%23ofps)
