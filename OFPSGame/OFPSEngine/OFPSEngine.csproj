@@ -71,12 +71,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigData.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceManagement\EngineResource.cs" />
+    <Compile Include="ResourceManagement\GenericFileResolver.cs" />
+    <Compile Include="ResourceManagement\IEngineResourceLoader.cs" />
+    <Compile Include="ResourceManagement\IEngineResourceResolver.cs" />
+    <Compile Include="ResourceManagement\Model3DLoader.cs" />
+    <Compile Include="ResourceManagement\Model3DResource.cs" />
+    <Compile Include="ResourceManagement\ResourceManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assimp64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="sharpdx_direct3d11_effects_x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

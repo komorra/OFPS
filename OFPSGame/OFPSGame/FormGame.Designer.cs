@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Name = "FormGame";
             this.Text = "OFPS - Game Client";
+            this.Load += new System.EventHandler(this.FormGame_Load);
             this.ResumeLayout(false);
 
         }
