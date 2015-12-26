@@ -23,7 +23,8 @@ namespace OFPSEngine.ResourceManagement
                 });
             }
 
-            var model = importer.ImportFileFromStream(assetStream, PostProcessSteps.CalculateTangentSpace, "fbx");
+            var model = importer.ImportFileFromStream(assetStream,
+                PostProcessSteps.CalculateTangentSpace | PostProcessSteps.Triangulate, "fbx");
             var resource = new Model3DResource(model);
 
             return resource;
