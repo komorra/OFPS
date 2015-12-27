@@ -80,7 +80,8 @@ namespace OFPSEngine.Rendering
             shader.GetVariableByName("world").AsMatrix().SetMatrix(info.World);
             shader.GetVariableByName("viewProj").AsMatrix().SetMatrix(info.View*info.Projection);
             shader.GetVariableByName("diffuse").AsShaderResource().SetResource(info.DiffuseMap.View);
-            shader.GetVariableByName("normal").AsShaderResource().SetResource(info.NormalMap.View);
+            shader.GetVariableByName("normal").AsShaderResource().SetResource(info.NormalMap.View);            
+            shader.GetVariableByName("campos").AsVector().Set(info.CameraPosition);
             shader.GetTechniqueByIndex(0).GetPassByIndex(0).Apply(Context);
 
             Context.DrawIndexed(model.IndexCount, 0, 0);

@@ -101,6 +101,7 @@ namespace OFPSGame
             info.View = camera.View;
             info.DiffuseMap = texture;
             info.NormalMap = normalmap;
+            info.CameraPosition = camera.Position;
             
             Renderer.Current.DrawModel3D(model, info);
         }

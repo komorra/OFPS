@@ -1,0 +1,84 @@
+struct VS_IN
+{
+	float3 pos : POSITION;
+	float3 nor : NORMAL;
+	float2 uv : TEXCOORD;
+	float3 tan : TANGENT;
+	float3 bin : BINORMAL;	
+};
+
+struct PS_IN
+{
+	float4 pos : SV_POSITION;
+	float3 nor : NORMAL;
+	float2 uv : TEXCOORD0;	
+	float3 tan : TANGENT;
+	float3 bin : BINORMAL;
+	float3 wpos : TEXCOORD1;
+};
+
+float3 campos;
+float4x4 world;
+float4x4 viewProj;
+Texture2D diffuse;
+Texture2D normal;
+
+SamplerState Material
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Wrap;
+	AddressV = Wrap;
+};
+
+PS_IN VS( VS_IN input )
+{
+	PS_IN output = (PS_IN)0;
+	
+	float4 wpos = mul(float4(input.pos,1), world);
+	output.pos = mul(wpos, viewProj);
+	output.nor = normalize(mul(float4(input.nor,0), world).xyz);
+	output.uv = input.uv;	
+	output.tan = normalize(mul(float4(input.tan,0), world).xyz);
+	output.bin = normalize(mul(float4(input.bin,0), world).xyz);
+	output.wpos = wpos.xyz;
+	
+	return output;
+}
+
+float3 lit_dir(float3 nrm, float3 dir, float3 dif, float3 amb, float3 V)
+{
+	float3 lit = saturate(dot(normalize(dir), nrm)) + pow(saturate(dot(reflect(-normalize(dir),nrm), V)),20);
+	return lit * dif + amb;
+
+	//float3 R = reflect(normalize(dir), normalize(nrm));
+	//float3 FC = dif * pow(saturate(dot(R,V)), 1) + amb;
+	
+	return lit;
+}
+
+float4 PS( PS_IN input ) : SV_Target
+{
+	float4 dif = diffuse.Sample(Material, input.uv);
+	float3 nrm = normal.Sample(Material, input.uv);
+	nrm = (nrm*2.0)-1.0;
+	float3 bn = (nrm.x * input.tan) + (nrm.y * input.bin) + (nrm.z * input.nor);
+	bn = normalize(bn);
+		
+	float3 vdir = normalize(campos-input.wpos);
+
+	float3 lins = lit_dir(bn, float3(-6,-1,0), float3(1,0.8,0.7), float3(0.01,0,0), vdir);
+
+	float3 col = saturate(dif.rgb * lins);
+
+	return float4(col.rgb, dif.a);
+}
+
+technique10 Render
+{
+	pass VertexColored
+	{
+		SetGeometryShader( 0 );
+		SetVertexShader( CompileShader( vs_4_0, VS() ) );
+		SetPixelShader( CompileShader( ps_4_0, PS() ) );
+	}
+}

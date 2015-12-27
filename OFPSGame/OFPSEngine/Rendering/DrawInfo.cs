@@ -9,6 +9,7 @@ namespace OFPSEngine.Rendering
 {
     public class DrawInfo
     {
+        public Vector3 CameraPosition;
         public Matrix World;
         public Matrix View;
         public Matrix Projection;
