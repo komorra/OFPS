@@ -1,6 +1,6 @@
 ﻿namespace OFPSGame
 {
-    partial class FormGame
+    partial class FormEditor
     {
         /// <summary>
         /// Required designer variable.

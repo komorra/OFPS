@@ -74,6 +74,7 @@
     <Compile Include="Configuration\ConfigData.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Rendering\ControlViewport.cs">
       <SubType>UserControl</SubType>
     </Compile>
