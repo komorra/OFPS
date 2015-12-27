@@ -55,9 +55,13 @@ namespace OFPSEngine.Rendering
                     var position = model.ModelData.Meshes[0].Vertices[i];
                     var normal = model.ModelData.Meshes[0].Normals[i];
                     var uv = model.ModelData.Meshes[0].TextureCoordinateChannels[0][i];
+                    var tangent = model.ModelData.Meshes[0].Tangents[i];
+                    var binormal = model.ModelData.Meshes[0].BiTangents[i];
 
-                    var v = new Vertex(new Vector3(position.X, position.Z, position.Y),
-                        new Vector3(normal.X, normal.Z, normal.Y), new Vector2(uv.X, 1f-uv.Y));
+                    var v = new Vertex(new Vector3(-position.X, position.Z, position.Y),
+                        new Vector3(-normal.X, normal.Z, normal.Y), new Vector2(uv.X, 1f - uv.Y),
+                        new Vector3(-tangent.X, tangent.Z, tangent.Y), new Vector3(-binormal.X, binormal.Z, binormal.Y));
+
                     vertices.Add(v);
                 }                              
 
@@ -75,7 +79,8 @@ namespace OFPSEngine.Rendering
             Context.InputAssembler.SetIndexBuffer(model.IndexBuffer, Format.R32_UInt, 0);
             shader.GetVariableByName("world").AsMatrix().SetMatrix(info.World);
             shader.GetVariableByName("viewProj").AsMatrix().SetMatrix(info.View*info.Projection);
-            shader.GetVariableByName("diffuse").AsShaderResource().SetResource(info.DiffuseTexture.View);
+            shader.GetVariableByName("diffuse").AsShaderResource().SetResource(info.DiffuseMap.View);
+            shader.GetVariableByName("normal").AsShaderResource().SetResource(info.NormalMap.View);
             shader.GetTechniqueByIndex(0).GetPassByIndex(0).Apply(Context);
 
             Context.DrawIndexed(model.IndexCount, 0, 0);

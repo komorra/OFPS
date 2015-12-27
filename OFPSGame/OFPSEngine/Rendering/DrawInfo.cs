@@ -12,7 +12,8 @@ namespace OFPSEngine.Rendering
         public Matrix World;
         public Matrix View;
         public Matrix Projection;
-        public Texture2DResource DiffuseTexture;
-        public Texture2DResource Lightmap;
+        public Texture2DResource DiffuseMap;
+        public Texture2DResource LightMap;
+        public Texture2DResource NormalMap;
     }
 }

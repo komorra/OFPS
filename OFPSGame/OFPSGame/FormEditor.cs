@@ -28,6 +28,7 @@ namespace OFPSGame
         private List<Keys> pressedKeys = new List<Keys>(); 
         private Camera camera = new Camera();
         private Texture2DResource texture;
+        private Texture2DResource normalmap;
 
         public FormEditor()
         {
@@ -43,8 +44,9 @@ namespace OFPSGame
             resourceManager.RegisterLoader(new Model3DLoader(), ".fbx");
             resourceManager.RegisterLoader(new Texture2DLoader(), ".png;.jpg;.bmp;.tga");
             
-            model = resourceManager.Load<Model3DResource>("stairs01_ph.fbx");
-            texture = resourceManager.Load<Texture2DResource>("stairs01_ph.png");
+            model = resourceManager.Load<Model3DResource>("material_sample.fbx");
+            texture = resourceManager.Load<Texture2DResource>("DefaultMaterial_Base_Color.png");
+            normalmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Normal_DirectX.png");
 
             control = new ControlViewport() {Dock = DockStyle.Fill};
             control.CustomRender += ControlOnCustomRender;
@@ -97,7 +99,8 @@ namespace OFPSGame
             info.World = Matrix.Identity;
             info.Projection = camera.Projection;
             info.View = camera.View;
-            info.DiffuseTexture = texture;
+            info.DiffuseMap = texture;
+            info.NormalMap = normalmap;
             
             Renderer.Current.DrawModel3D(model, info);
         }
