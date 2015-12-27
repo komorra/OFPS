@@ -16,11 +16,11 @@ namespace OFPSEngine.ResourceManagement
             this.baseDirectory = baseDirectory;
         }
 
-        public Stream Resolve(string filename)
+        public Stream Resolve(string filename, out int size)
         {
             var appDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             var stream = File.OpenRead(Path.Combine(appDir, baseDirectory, filename));
-            
+            size = (int)stream.Length;
             return stream;                       
         }
     }

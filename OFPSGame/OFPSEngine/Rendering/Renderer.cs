@@ -19,6 +19,7 @@ namespace OFPSEngine.Rendering
         internal Factory Factory { get; private set; }
         internal DeviceContext Context { get; private set; }            
         private Effect shader;
+        private InputLayout layout;
 
         private static Renderer current;        
 
@@ -41,7 +42,7 @@ namespace OFPSEngine.Rendering
             shader = new Effect(Device, bc);
 
             var sig = shader.GetTechniqueByIndex(0).GetPassByIndex(0).Description.Signature;
-            Context.InputAssembler.InputLayout = new InputLayout(Device, sig, Vertex.GetElements());
+            Context.InputAssembler.InputLayout = layout = new InputLayout(Device, sig, Vertex.GetElements());
         }
 
         public void DrawModel3D(Model3DResource model, DrawInfo info)
@@ -56,7 +57,7 @@ namespace OFPSEngine.Rendering
                     var uv = model.ModelData.Meshes[0].TextureCoordinateChannels[0][i];
 
                     var v = new Vertex(new Vector3(position.X, position.Z, position.Y),
-                        new Vector3(normal.X, normal.Z, normal.Y), new Vector2(uv.X, uv.Y));
+                        new Vector3(normal.X, normal.Z, normal.Y), new Vector2(uv.X, 1f-uv.Y));
                     vertices.Add(v);
                 }                              
 
@@ -68,11 +69,13 @@ namespace OFPSEngine.Rendering
                 model.IndexCount = indices.Length;
             }
 
+            Context.InputAssembler.InputLayout = layout;
             Context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
             Context.InputAssembler.SetVertexBuffers(0, new[] {model.VertexBuffer}, new[] {Vertex.Stride}, new[] {0});
             Context.InputAssembler.SetIndexBuffer(model.IndexBuffer, Format.R32_UInt, 0);
             shader.GetVariableByName("world").AsMatrix().SetMatrix(info.World);
             shader.GetVariableByName("viewProj").AsMatrix().SetMatrix(info.View*info.Projection);
+            shader.GetVariableByName("diffuse").AsShaderResource().SetResource(info.DiffuseTexture.View);
             shader.GetTechniqueByIndex(0).GetPassByIndex(0).Apply(Context);
 
             Context.DrawIndexed(model.IndexCount, 0, 0);

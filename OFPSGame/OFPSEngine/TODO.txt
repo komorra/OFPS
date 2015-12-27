@@ -1,0 +1,1 @@
+﻿* Implement resource caching - to not load resource again if is previously loaded

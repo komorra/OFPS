@@ -8,6 +8,6 @@ namespace OFPSEngine.ResourceManagement
 {
     public interface IEngineResourceResolver
     {
-        Stream Resolve(string filename);
+        Stream Resolve(string filename, out int size);
     }
 }

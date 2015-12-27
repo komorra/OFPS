@@ -26,8 +26,9 @@ namespace OFPSEngine.ResourceManagement
         public T Load<T>(string filename) where T : EngineResource
         {           
             var loader = loaders.FirstOrDefault(x => x.Key.Contains(Path.GetExtension(filename))).Value;
-            var stream = resolver.Resolve(filename);
-            var resource = loader.Load(stream) as T;
+            int size;
+            var stream = resolver.Resolve(filename, out size);
+            var resource = loader.Load(stream, size) as T;
             stream.Dispose();
 
             return resource;

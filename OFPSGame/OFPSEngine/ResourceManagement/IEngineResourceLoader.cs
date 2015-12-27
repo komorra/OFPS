@@ -8,6 +8,6 @@ namespace OFPSEngine.ResourceManagement
 {
     public interface IEngineResourceLoader<out T> where T : EngineResource
     {
-        T Load(Stream assetStream);
+        T Load(Stream assetStream, int size);
     }
 }

@@ -12,7 +12,7 @@ namespace OFPSEngine.ResourceManagement
         private static AssimpContext importer;
         private static LogStream logStream;
 
-        public Model3DResource Load(Stream assetStream)
+        public Model3DResource Load(Stream assetStream, int size)
         {            
             if (importer == null)
             {

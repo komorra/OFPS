@@ -27,6 +27,7 @@ namespace OFPSGame
         private Point mpos;
         private List<Keys> pressedKeys = new List<Keys>(); 
         private Camera camera = new Camera();
+        private Texture2DResource texture;
 
         public FormEditor()
         {
@@ -40,8 +41,10 @@ namespace OFPSGame
             var resolver = new GenericFileResolver("GameContent");
             var resourceManager = new ResourceManager(resolver);
             resourceManager.RegisterLoader(new Model3DLoader(), ".fbx");
+            resourceManager.RegisterLoader(new Texture2DLoader(), ".png;.jpg;.bmp;.tga");
             
             model = resourceManager.Load<Model3DResource>("stairs01_ph.fbx");
+            texture = resourceManager.Load<Texture2DResource>("stairs01_ph.png");
 
             control = new ControlViewport() {Dock = DockStyle.Fill};
             control.CustomRender += ControlOnCustomRender;
@@ -90,9 +93,12 @@ namespace OFPSGame
         private void ControlOnCustomRender()
         {
             var info = new DrawInfo();
+
             info.World = Matrix.Identity;
             info.Projection = camera.Projection;
             info.View = camera.View;
+            info.DiffuseTexture = texture;
+            
             Renderer.Current.DrawModel3D(model, info);
         }
 

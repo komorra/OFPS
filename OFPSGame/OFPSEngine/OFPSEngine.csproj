@@ -91,6 +91,8 @@
     <Compile Include="ResourceManagement\Model3DLoader.cs" />
     <Compile Include="ResourceManagement\Model3DResource.cs" />
     <Compile Include="ResourceManagement\ResourceManager.cs" />
+    <Compile Include="ResourceManagement\Texture2DLoader.cs" />
+    <Compile Include="ResourceManagement\Texture2DResource.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -104,6 +106,7 @@
     <Content Include="assimp64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TODO.txt" />
     <None Include="Resources\Shader.txt" />
     <Content Include="sharpdx_direct3d11_effects_x64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
