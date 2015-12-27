@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 using OFPSEngine.ResourceManagement;
 using SharpDX;
 using SharpDX.D3DCompiler;
@@ -80,8 +82,28 @@ namespace OFPSEngine.Rendering
             shader.GetVariableByName("world").AsMatrix().SetMatrix(info.World);
             shader.GetVariableByName("viewProj").AsMatrix().SetMatrix(info.View*info.Projection);
             shader.GetVariableByName("diffuse").AsShaderResource().SetResource(info.DiffuseMap.View);
-            shader.GetVariableByName("normal").AsShaderResource().SetResource(info.NormalMap.View);            
+            shader.GetVariableByName("normal").AsShaderResource().SetResource(info.NormalMap.View);
+            shader.GetVariableByName("metallic").AsShaderResource().SetResource(info.MetallicMap.View);
+            shader.GetVariableByName("roughness").AsShaderResource().SetResource(info.RoughnessMap.View);           
             shader.GetVariableByName("campos").AsVector().Set(info.CameraPosition);
+            shader.GetVariableByName("cubemap").AsShaderResource().SetResource(info.CubeMap.View);
+
+            var lights = new Light[10];
+            lights[0].Type = 1;
+            lights[0].Direction = new Vector3((float)Math.Sin(DateTime.Now.Millisecond/1000f*Math.PI*2.0)*5f, 10, 10);
+            lights[0].Position = Vector3.Zero;
+            lights[0].Color = Vector3.One;
+
+            var lih = GCHandle.Alloc(lights, GCHandleType.Pinned);
+            var liptr = lih.AddrOfPinnedObject();
+            shader.GetVariableByName("lights").GetElement(0).GetMemberByName("pos").AsVector().Set(lights[0].Position);
+            shader.GetVariableByName("lights").GetElement(0).GetMemberByName("dir").AsVector().Set(new Vector3(Control.MousePosition.X-960, 0, Control.MousePosition.Y-540)/2000f);
+            shader.GetVariableByName("lights").GetElement(0).GetMemberByName("col").AsVector().Set(lights[0].Color);
+            shader.GetVariableByName("lights").GetElement(0).GetMemberByName("type").AsScalar().Set(lights[0].Type);
+            //shader.GetVariableByName("lights").SetRawValue(liptr,0,Marshal.SizeOf(typeof(Light))*10);
+
+            lih.Free();
+
             shader.GetTechniqueByIndex(0).GetPassByIndex(0).Apply(Context);
 
             Context.DrawIndexed(model.IndexCount, 0, 0);

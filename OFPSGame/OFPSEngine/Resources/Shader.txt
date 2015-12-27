@@ -17,11 +17,24 @@ struct PS_IN
 	float3 wpos : TEXCOORD1;
 };
 
+#define MAX_LIGHTS 10
+
+struct light
+{
+	float3 pos;
+	float3 dir;
+	float3 col;
+	int type;
+} lights[MAX_LIGHTS];
+
 float3 campos;
 float4x4 world;
 float4x4 viewProj;
 Texture2D diffuse;
 Texture2D normal;
+Texture2D metallic;
+Texture2D roughness;
+TextureCube cubemap;
 
 SamplerState Material
 {
@@ -47,7 +60,7 @@ PS_IN VS( VS_IN input )
 
 float3 lit_dir(float3 nrm, float3 dir, float3 dif, float3 amb, float3 V)
 {
-	float3 lit = saturate(dot(normalize(dir), nrm)) + pow(saturate(dot(reflect(-normalize(dir),nrm), V)),20);
+	float3 lit = saturate(dot(normalize(dir), nrm)) + pow(saturate(dot(reflect(-normalize(dir),nrm), V)),30)*0.7;
 	return lit * dif + amb;
 
 	//float3 R = reflect(normalize(dir), normalize(nrm));
@@ -66,9 +79,25 @@ float4 PS( PS_IN input ) : SV_Target
 		
 	float3 vdir = normalize(campos-input.wpos);
 
-	float3 lins = lit_dir(bn, float3(-6,-1,0), float3(1,0.8,0.7), float3(0.01,0,0), vdir);
+	//float3 lins = lit_dir(bn, float3(-6,-1,0), float3(1,1,1), float3(0.01,0,0), vdir);
+	float3 lins = (float3)0;
+	for(int i = 0; i < 1; i++)
+	{
+		if(lights[i].type == 0)break;
+		else if(lights[i].type == 1) lins += lit_dir(bn, lights[i].dir, lights[i].col, (float3)0, vdir);
+	}
 
-	float3 col = saturate(dif.rgb * lins);
+	float metal = 1.0-metallic.Sample(Material, input.uv).x;
+	float rough = 1.0-roughness.Sample(Material, input.uv).x;
+
+	float fres = pow(saturate(1-dot(bn, vdir)),4);
+	rough += fres*0.8;
+	float3 env = cubemap.SampleLevel(Material, reflect(vdir, bn), metal*10.0-fres*6.0);
+	
+	env *= rough;	
+	env *= dif.rgb;		
+
+	float3 col = saturate(lerp(dif.rgb * lins, env, rough * (1-length(lins)/3.0)));
 
 	return float4(col.rgb, dif.a);
 }

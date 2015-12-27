@@ -29,6 +29,10 @@ namespace OFPSGame
         private Camera camera = new Camera();
         private Texture2DResource texture;
         private Texture2DResource normalmap;
+        private Texture2DResource cubemap;
+        private Texture2DResource metallicmap;
+        private Texture2DResource roughnessmap;
+        private DateTime start = DateTime.Now;
 
         public FormEditor()
         {
@@ -42,11 +46,14 @@ namespace OFPSGame
             var resolver = new GenericFileResolver("GameContent");
             var resourceManager = new ResourceManager(resolver);
             resourceManager.RegisterLoader(new Model3DLoader(), ".fbx");
-            resourceManager.RegisterLoader(new Texture2DLoader(), ".png;.jpg;.bmp;.tga");
+            resourceManager.RegisterLoader(new Texture2DLoader(), ".png;.jpg;.bmp;.tga;.dds");
             
             model = resourceManager.Load<Model3DResource>("material_sample.fbx");
             texture = resourceManager.Load<Texture2DResource>("DefaultMaterial_Base_Color.png");
             normalmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Normal_DirectX.png");
+            metallicmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Metallic.png");
+            roughnessmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Roughness.png");
+            cubemap = resourceManager.Load<Texture2DResource>("yoko.dds");
 
             control = new ControlViewport() {Dock = DockStyle.Fill};
             control.CustomRender += ControlOnCustomRender;
@@ -96,12 +103,15 @@ namespace OFPSGame
         {
             var info = new DrawInfo();
 
-            info.World = Matrix.Identity;
+            info.World = Matrix.RotationY((float) (DateTime.Now - start).TotalSeconds*0.2f);
             info.Projection = camera.Projection;
             info.View = camera.View;
             info.DiffuseMap = texture;
             info.NormalMap = normalmap;
+            info.MetallicMap = metallicmap;
+            info.RoughnessMap = roughnessmap;
             info.CameraPosition = camera.Position;
+            info.CubeMap = cubemap;
             
             Renderer.Current.DrawModel3D(model, info);
         }

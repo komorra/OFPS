@@ -16,5 +16,8 @@ namespace OFPSEngine.Rendering
         public Texture2DResource DiffuseMap;
         public Texture2DResource LightMap;
         public Texture2DResource NormalMap;
+        public Texture2DResource MetallicMap;
+        public Texture2DResource RoughnessMap;
+        public Texture2DResource CubeMap;
     }
 }
