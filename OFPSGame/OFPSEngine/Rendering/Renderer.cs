@@ -97,7 +97,7 @@ namespace OFPSEngine.Rendering
             var lih = GCHandle.Alloc(lights, GCHandleType.Pinned);
             var liptr = lih.AddrOfPinnedObject();
             shader.GetVariableByName("lights").GetElement(0).GetMemberByName("pos").AsVector().Set(lights[0].Position);
-            shader.GetVariableByName("lights").GetElement(0).GetMemberByName("dir").AsVector().Set(new Vector3(Control.MousePosition.X-960, 0, Control.MousePosition.Y-540)/2000f);
+            shader.GetVariableByName("lights").GetElement(0).GetMemberByName("dir").AsVector().Set(new Vector3(Control.MousePosition.X-960, 180, Control.MousePosition.Y-540)/2000f);
             shader.GetVariableByName("lights").GetElement(0).GetMemberByName("col").AsVector().Set(lights[0].Color);
             shader.GetVariableByName("lights").GetElement(0).GetMemberByName("type").AsScalar().Set(lights[0].Type);
             //shader.GetVariableByName("lights").SetRawValue(liptr,0,Marshal.SizeOf(typeof(Light))*10);

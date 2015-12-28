@@ -23,15 +23,16 @@ namespace OFPSGame
         private Stopwatch gameLoopWatch;
         private Timer gameTimer;
         private Model3DResource model;
+        private Model3DResource floor;
         private bool mdown;
         private Point mpos;
         private List<Keys> pressedKeys = new List<Keys>(); 
         private Camera camera = new Camera();
-        private Texture2DResource texture;
-        private Texture2DResource normalmap;
+        private Texture2DResource[] texture = new Texture2DResource[4];
+        private Texture2DResource[] normalmap = new Texture2DResource[4];        
+        private Texture2DResource[] metallicmap = new Texture2DResource[4];
+        private Texture2DResource[] roughnessmap = new Texture2DResource[4];
         private Texture2DResource cubemap;
-        private Texture2DResource metallicmap;
-        private Texture2DResource roughnessmap;
         private DateTime start = DateTime.Now;
 
         public FormEditor()
@@ -49,20 +50,28 @@ namespace OFPSGame
             resourceManager.RegisterLoader(new Texture2DLoader(), ".png;.jpg;.bmp;.tga;.dds");
             
             model = resourceManager.Load<Model3DResource>("material_sample.fbx");
-            texture = resourceManager.Load<Texture2DResource>("DefaultMaterial_Base_Color.png");
-            normalmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Normal_DirectX.png");
-            metallicmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Metallic.png");
-            roughnessmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Roughness.png");
 
-            texture = resourceManager.Load<Texture2DResource>("t1_c.png");
-            normalmap = resourceManager.Load<Texture2DResource>("t1_n.png");
-            metallicmap = resourceManager.Load<Texture2DResource>("t1_m.png");
-            roughnessmap = resourceManager.Load<Texture2DResource>("t1_r.png");
+            floor = resourceManager.Load<Model3DResource>("floor.fbx");
 
-            //texture = resourceManager.Load<Texture2DResource>("t2_c.png");
-            //normalmap = resourceManager.Load<Texture2DResource>("t2_n.png");
-            //metallicmap = resourceManager.Load<Texture2DResource>("t2_m.png");
-            //roughnessmap = resourceManager.Load<Texture2DResource>("t2_r.png");
+            texture[0] = resourceManager.Load<Texture2DResource>("DefaultMaterial_Base_Color.png");
+            normalmap[0] = resourceManager.Load<Texture2DResource>("DefaultMaterial_Normal_DirectX.png");
+            metallicmap[0] = resourceManager.Load<Texture2DResource>("DefaultMaterial_Metallic.png");
+            roughnessmap[0] = resourceManager.Load<Texture2DResource>("DefaultMaterial_Roughness.png");
+
+            texture[1] = resourceManager.Load<Texture2DResource>("t1_c.png");
+            normalmap[1] = resourceManager.Load<Texture2DResource>("t1_n.png");
+            metallicmap[1] = resourceManager.Load<Texture2DResource>("t1_m.png");
+            roughnessmap[1] = resourceManager.Load<Texture2DResource>("t1_r.png");
+
+            texture[2] = resourceManager.Load<Texture2DResource>("t2_c.png");
+            normalmap[2] = resourceManager.Load<Texture2DResource>("t2_n.png");
+            metallicmap[2] = resourceManager.Load<Texture2DResource>("t2_m.png");
+            roughnessmap[2] = resourceManager.Load<Texture2DResource>("t2_r.png");
+
+            texture[3] = resourceManager.Load<Texture2DResource>("floor_c.png");
+            normalmap[3] = resourceManager.Load<Texture2DResource>("floor_n.png");
+            metallicmap[3] = resourceManager.Load<Texture2DResource>("floor_m.png");
+            roughnessmap[3] = resourceManager.Load<Texture2DResource>("floor_r.png");
 
             cubemap = resourceManager.Load<Texture2DResource>("yoko.dds");
 
@@ -114,17 +123,28 @@ namespace OFPSGame
         {
             var info = new DrawInfo();
 
-            info.World = Matrix.RotationY((float) (DateTime.Now - start).TotalSeconds*0.2f);
-            info.Projection = camera.Projection;
-            info.View = camera.View;
-            info.DiffuseMap = texture;
-            info.NormalMap = normalmap;
-            info.MetallicMap = metallicmap;
-            info.RoughnessMap = roughnessmap;
-            info.CameraPosition = camera.Position;
-            info.CubeMap = cubemap;
-            
-            Renderer.Current.DrawModel3D(model, info);
+            for (int i = 0; i < 3; i++)
+            {
+
+                info.World = Matrix.RotationY((float) (DateTime.Now - start).TotalSeconds*0.2f)*
+                             Matrix.Translation(i*3-3, 0, 0);
+                info.Projection = camera.Projection;
+                info.View = camera.View;
+                info.DiffuseMap = texture[i];
+                info.NormalMap = normalmap[i];
+                info.MetallicMap = metallicmap[i];
+                info.RoughnessMap = roughnessmap[i];
+                info.CameraPosition = camera.Position;
+                info.CubeMap = cubemap;
+
+                Renderer.Current.DrawModel3D(model, info);
+            }
+            info.World = Matrix.Scaling(10)*Matrix.Translation(0, -1.7f, 0);
+            info.DiffuseMap = texture[3];
+            info.NormalMap = normalmap[3];
+            info.MetallicMap = metallicmap[3];
+            info.RoughnessMap = roughnessmap[3];
+            Renderer.Current.DrawModel3D(floor, info);
         }
 
         private void GameTimerOnTick(object sender, EventArgs eventArgs)

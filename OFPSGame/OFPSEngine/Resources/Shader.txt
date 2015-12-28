@@ -97,7 +97,7 @@ float4 PS( PS_IN input ) : SV_Target
 			
 	env *= dif.rgb;		
 
-	float3 col = saturate(lerp(dif.rgb * lins, max(env,pow(lins,20)*0.0000006), metal * (1-rough*0.4)));
+	float3 col = saturate(lerp(dif.rgb * lins, max(env,pow(lins*0.575,60)*0.000015), metal * (1-rough*0.4)));
 
 	return float4(col.rgb, dif.a);
 }
