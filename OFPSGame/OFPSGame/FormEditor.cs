@@ -53,6 +53,17 @@ namespace OFPSGame
             normalmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Normal_DirectX.png");
             metallicmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Metallic.png");
             roughnessmap = resourceManager.Load<Texture2DResource>("DefaultMaterial_Roughness.png");
+
+            texture = resourceManager.Load<Texture2DResource>("t1_c.png");
+            normalmap = resourceManager.Load<Texture2DResource>("t1_n.png");
+            metallicmap = resourceManager.Load<Texture2DResource>("t1_m.png");
+            roughnessmap = resourceManager.Load<Texture2DResource>("t1_r.png");
+
+            //texture = resourceManager.Load<Texture2DResource>("t2_c.png");
+            //normalmap = resourceManager.Load<Texture2DResource>("t2_n.png");
+            //metallicmap = resourceManager.Load<Texture2DResource>("t2_m.png");
+            //roughnessmap = resourceManager.Load<Texture2DResource>("t2_r.png");
+
             cubemap = resourceManager.Load<Texture2DResource>("yoko.dds");
 
             control = new ControlViewport() {Dock = DockStyle.Fill};

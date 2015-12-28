@@ -58,9 +58,9 @@ PS_IN VS( VS_IN input )
 	return output;
 }
 
-float3 lit_dir(float3 nrm, float3 dir, float3 dif, float3 amb, float3 V)
+float3 lit_dir(float3 nrm, float3 dir, float3 dif, float3 amb, float3 V, float spec, float hi)
 {
-	float3 lit = saturate(dot(normalize(dir), nrm)) + pow(saturate(dot(reflect(-normalize(dir),nrm), V)),30)*0.7;
+	float3 lit = saturate(dot(normalize(dir), nrm)) + pow(saturate(dot(reflect(-normalize(dir),nrm), V)),40*hi+1)*spec*(1.2+hi);
 	return lit * dif + amb;
 
 	//float3 R = reflect(normalize(dir), normalize(nrm));
@@ -73,6 +73,10 @@ float4 PS( PS_IN input ) : SV_Target
 {
 	float4 dif = diffuse.Sample(Material, input.uv);
 	float3 nrm = normal.Sample(Material, input.uv);
+
+	float metal = metallic.Sample(Material, input.uv).w;
+	float rough = roughness.Sample(Material, input.uv).x;
+
 	nrm = (nrm*2.0)-1.0;
 	float3 bn = (nrm.x * input.tan) + (nrm.y * input.bin) + (nrm.z * input.nor);
 	bn = normalize(bn);
@@ -84,20 +88,16 @@ float4 PS( PS_IN input ) : SV_Target
 	for(int i = 0; i < 1; i++)
 	{
 		if(lights[i].type == 0)break;
-		else if(lights[i].type == 1) lins += lit_dir(bn, lights[i].dir, lights[i].col, (float3)0, vdir);
-	}
+		else if(lights[i].type == 1) lins += lit_dir(bn, lights[i].dir, lights[i].col, (float3)0, vdir, 1.0-rough, (1.0-metal)*(1.0-rough));
+	}	
 
-	float metal = 1.0-metallic.Sample(Material, input.uv).x;
-	float rough = 1.0-roughness.Sample(Material, input.uv).x;
-
-	float fres = pow(saturate(1-dot(bn, vdir)),4);
+	float fres = pow(saturate(1-dot(bn, vdir)),3.5);
 	rough += fres*0.8;
-	float3 env = cubemap.SampleLevel(Material, reflect(vdir, bn), metal*10.0-fres*6.0);
-	
-	env *= rough;	
+	float3 env = cubemap.SampleLevel(Material, reflect(vdir, bn), (rough-fres)*40.0);
+			
 	env *= dif.rgb;		
 
-	float3 col = saturate(lerp(dif.rgb * lins, env, rough * (1-length(lins)/3.0)));
+	float3 col = saturate(lerp(dif.rgb * lins, max(env,pow(lins,20)*0.0000006), metal * (1-rough*0.4)));
 
 	return float4(col.rgb, dif.a);
 }
